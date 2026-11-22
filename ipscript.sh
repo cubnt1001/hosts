@@ -1,12 +1,16 @@
 #!/bin/bash
+functie(){
 
-cat /etc/hosts | while read ip nume rest
-do
-        [ -z "$ip" ] && break
+adresa=$(nslookup "$1" "$3" | awk '/^Address:/ {print $2}' | tail -n 2 | head -n 1)
 
-        adresa=$(nslookup $nume 8.8.8.8 | grep "Address" | tail -n +2 | grep -w "$ip")
+if [ "$adresa" = "$2" ]; then
+	echo "Asociere corecta!"
+else
+	echo "Asociere gresita!"
+fi
 
-        if [ -z "$adresa" ]; then
-                echo "Bogus IP for $nume in /etc/hosts!"
-        fi
-done
+}
+
+functie fmi.unibuc.ro 192.178.183.139 8.8.8.8
+functie wikipedia.org 185.15.59.224 8.8.8.8
+
